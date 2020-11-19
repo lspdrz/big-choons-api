@@ -1,5 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
+from rest_framework_simplejwt import views as jwt_views
 from . import views
 
 router = routers.DefaultRouter()
@@ -10,5 +11,5 @@ router.register(r'tracks', views.TrackViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('auth/google/', views.GoogleAuthView.as_view(), name='google'),
 ]
