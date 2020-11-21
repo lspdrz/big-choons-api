@@ -43,11 +43,15 @@ class GoogleAuthView(APIView):
             return Response(content)
 
         # create user if they don't exist
+        print('hello google data')
+        print(data)
         try:
             user = User.objects.get(email=data['email'])
         except User.DoesNotExist:
             user = User()
             user.username = data['email']
+            user.first_name = data['given_name']
+            user.last_name = data['family_name']
             # provide random default password
             user.password = make_password(
                 BaseUserManager().make_random_password()
@@ -58,7 +62,10 @@ class GoogleAuthView(APIView):
         # generate token without username & password
         token = RefreshToken.for_user(user)
         response = {}
+        response['id'] = user.pk
         response['username'] = user.username
+        response['name'] = user.first_name + " " + user.last_name
+        response['email'] = user.email
         response['access_token'] = str(token.access_token)
         response['refresh_token'] = str(token)
         return Response(response)
