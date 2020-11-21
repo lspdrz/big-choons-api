@@ -109,6 +109,7 @@ REST_FRAMEWORK = {
 }
 
 # TODO: Change to restricted endpoints later
+ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 
 
