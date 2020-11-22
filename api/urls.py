@@ -11,5 +11,6 @@ router.register(r'tracks', views.TrackViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
+    path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/google/', views.GoogleAuthView.as_view(), name='google'),
 ]
