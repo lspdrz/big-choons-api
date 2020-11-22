@@ -43,8 +43,6 @@ class GoogleAuthView(APIView):
             return Response(content)
 
         # create user if they don't exist
-        print('hello google data')
-        print(data)
         try:
             user = User.objects.get(email=data['email'])
         except User.DoesNotExist:
@@ -67,5 +65,7 @@ class GoogleAuthView(APIView):
         response['name'] = user.first_name + " " + user.last_name
         response['email'] = user.email
         response['access_token'] = str(token.access_token)
+        response['access_token_expiry'] = str(
+            token.access_token.payload['exp'])
         response['refresh_token'] = str(token)
         return Response(response)
