@@ -60,12 +60,16 @@ class GoogleAuthView(APIView):
         # generate token without username & password
         token = RefreshToken.for_user(user)
         response = {}
-        response['id'] = user.pk
-        response['username'] = user.username
-        response['name'] = user.first_name + " " + user.last_name
-        response['email'] = user.email
-        response['access_token'] = str(token.access_token)
-        response['access_token_expiry'] = str(
-            token.access_token.payload['exp'])
-        response['refresh_token'] = str(token)
-        return Response(response)
+        response = Response()
+        response.set_cookie(key='refresh_token',
+                            value=str(token), httponly=True)
+        response.data = {
+            'id': user.pk,
+            'username': user.username,
+            'name': user.first_name + " " + user.last_name,
+            'email': user.email,
+            'access_token': str(token.access_token),
+            'access_token_expiry': str(
+                token.access_token.payload['exp']),
+        }
+        return response
