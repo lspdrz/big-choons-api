@@ -41,15 +41,18 @@ class TokenRefreshView(TokenViewBase):
     """
 
     def get(self, request):
-        print("hello")
-        print(request.COOKIES)
         try:
             refresh_token = request.COOKIES['refresh_token']
             if refresh_token:
                 response = Response()
                 token = RefreshToken(refresh_token)
-                response.set_cookie(key='refresh_token',
-                                    value=str(token), httponly=True)
+                response.set_cookie(
+                    key='refresh_token',
+                    value=str(token),
+                    httponly=True,
+                    secure=True,
+                    samesite='None',  # TODO: research more about the implications of this
+                )
                 response.data = {
                     'access_token': str(token.access_token),
                     'access_token_expiry': str(
@@ -96,8 +99,13 @@ class GoogleAuthView(APIView):
         # generate token without username & password
         token = RefreshToken.for_user(user)
         response = Response()
-        response.set_cookie(key='refresh_token',
-                            value=str(token), httponly=True)
+        response.set_cookie(
+            key='refresh_token',
+            value=str(token),
+            httponly=True,
+            secure=True,
+            samesite='None',  # TODO: research more about the implications of this
+        )
         response.data = {
             'id': user.pk,
             'username': user.username,
