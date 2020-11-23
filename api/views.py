@@ -7,10 +7,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.utils import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
-import requests
+from rest_framework_simplejwt.views import TokenViewBase
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import UserSerializer, TrackSerializer
+import requests
+from .serializers import UserSerializer, TrackSerializer, TokenObtainExpirySerializer, TokenRefreshExpirySerializer
 from .models import Track
 
 
@@ -24,6 +25,20 @@ class TrackViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Track.objects.all().order_by('title')
     serializer_class = TrackSerializer
+
+
+class TokenObtainPairView(TokenViewBase):
+    """
+        Return JWT tokens (access and refresh) for specific user based on username and password.
+    """
+    serializer_class = TokenObtainExpirySerializer
+
+
+class TokenRefreshView(TokenViewBase):
+    """
+        Renew tokens (access and refresh) with new expire time based on specific user's access token.
+    """
+    serializer_class = TokenRefreshExpirySerializer
 
 
 class GoogleAuthView(APIView):
