@@ -6,12 +6,13 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.utils import json
 from rest_framework.views import APIView
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenViewBase
 from rest_framework_simplejwt.tokens import RefreshToken
 
 import requests
-from .serializers import UserSerializer, TrackSerializer, TokenObtainExpirySerializer, TokenRefreshExpirySerializer
+from .serializers import UserSerializer, TrackSerializer, TokenObtainExpirySerializer
 from .models import Track
 
 
@@ -38,7 +39,27 @@ class TokenRefreshView(TokenViewBase):
     """
         Renew tokens (access and refresh) with new expire time based on specific user's access token.
     """
-    serializer_class = TokenRefreshExpirySerializer
+
+    def get(self, request):
+        print("hello")
+        print(request.COOKIES)
+        try:
+            refresh_token = request.COOKIES['refresh_token']
+            if refresh_token:
+                response = Response()
+                token = RefreshToken(refresh_token)
+                response.set_cookie(key='refresh_token',
+                                    value=str(token), httponly=True)
+                response.data = {
+                    'access_token': str(token.access_token),
+                    'access_token_expiry': str(
+                        token.access_token.payload['exp']),
+                }
+                return response
+            else:
+                raise ValidationError('No Refresh Token Available')
+        except:
+            raise ValidationError('No Refresh Token Available')
 
 
 class GoogleAuthView(APIView):
@@ -74,7 +95,6 @@ class GoogleAuthView(APIView):
 
         # generate token without username & password
         token = RefreshToken.for_user(user)
-        response = {}
         response = Response()
         response.set_cookie(key='refresh_token',
                             value=str(token), httponly=True)
