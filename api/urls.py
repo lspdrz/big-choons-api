@@ -16,4 +16,5 @@ urlpatterns = [
     path('auth/token/refresh/',
          views.TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/google/', views.GoogleAuthView.as_view(), name='google'),
+    path('auth/logout/', views.LogoutView.as_view(), name='logout'),
 ]

@@ -122,3 +122,19 @@ class GoogleAuthView(APIView):
                 token.access_token.payload['exp']),
         }
         return response
+
+
+"""
+Logout View (now only used to flush refresh_token cookie
+but can be used for logging user logouts as well later)
+"""
+
+
+class LogoutView(APIView):
+    def get(self, request):
+        response = Response()
+        response.delete_cookie('refresh_token')
+        response.data = {
+            'logged_out': True,
+        }
+        return response
