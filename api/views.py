@@ -46,6 +46,8 @@ class TokenRefreshView(TokenViewBase):
             if refresh_token:
                 response = Response()
                 token = RefreshToken(refresh_token)
+                user_id = int(token.access_token.payload['user_id'])
+                user = User.objects.get(pk=user_id)
                 response.set_cookie(
                     key='refresh_token',
                     value=str(token),
@@ -54,6 +56,10 @@ class TokenRefreshView(TokenViewBase):
                     samesite='None',  # TODO: research more about the implications of this
                 )
                 response.data = {
+                    'id': user.pk,
+                    'username': user.username,
+                    'name': user.first_name + " " + user.last_name,
+                    'email': user.email,
                     'access_token': str(token.access_token),
                     'access_token_expiry': str(
                         token.access_token.payload['exp']),
