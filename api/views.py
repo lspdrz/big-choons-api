@@ -133,7 +133,7 @@ but can be used for logging user logouts as well later)
 class LogoutView(APIView):
     def get(self, request):
         response = Response()
-        response.delete_cookie('refresh_token')
+        response.delete_cookie('refresh_token', samesite='None')
         response.data = {
             'logged_out': True,
         }
