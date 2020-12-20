@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 from pathlib import Path
 import django_heroku
+import dj_database_url
 import os
 import environ
 
@@ -90,14 +91,7 @@ WSGI_APPLICATION = 'big_choons_api.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DATABASE_NAME'),
-        'USER': env('DATABASE_USER'),
-        'PASSWORD': env('DATABASE_PASSWORD'),
-        'HOST': env('DATABASE_HOST'),
-        'PORT': int(env('DATABASE_PORT')),
-    }
+    'default': dj_database_url.config(conn_max_age=600)
 }
 
 REST_FRAMEWORK = {
@@ -153,4 +147,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 # Activate Django-Heroku.
-django_heroku.settings(locals(), databases=False)
+django_heroku.settings(locals())
